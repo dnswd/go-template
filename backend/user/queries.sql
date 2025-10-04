@@ -8,5 +8,5 @@ INSERT INTO users (id, email, name)
 VALUES ($1, $2, $3) 
 RETURNING id, email, name, created_at;
 
--- name: DeleteUser :exec
+-- name: DeleteUser :execrows
 DELETE FROM users WHERE id = $1;

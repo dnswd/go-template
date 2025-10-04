@@ -16,6 +16,7 @@ func (s *Server) setupRoutes() {
 		r.Route("/users", func(r chi.Router) {
 			r.Post("/", s.userHandler.Create)
 			r.Get("/{id}", s.userHandler.Get)
+			r.Delete("/{id}", s.userHandler.Delete)
 		})
 
 		// // Order routes

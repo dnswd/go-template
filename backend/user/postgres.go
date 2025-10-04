@@ -2,6 +2,8 @@ package user
 
 import (
 	"context"
+	"errors"
+	"log"
 
 	"github.com/dnswd/arus/db"
 	"github.com/google/uuid"
@@ -39,15 +41,29 @@ func (r *postgresRepo) Save(ctx context.Context, user *User) error {
 }
 
 func (r *postgresRepo) FindByID(ctx context.Context, id string) (*User, error) {
+	log.Println("ZCZC id", id)
 	pgUser, err := r.queries.GetUser(ctx, id)
+	log.Println("ZCZC err", err)
 	if err != nil {
 		return nil, err
 	}
 
+	log.Println("ZCZC pgUser", pgUser)
+
 	user := toUser(pgUser)
+	log.Println("ZCZC user", user)
 	return user, user.Validate()
 }
 
 func (r *postgresRepo) Delete(ctx context.Context, id string) error {
-	return r.queries.DeleteUser(ctx, id)
+	rowsAffected, err := r.queries.DeleteUser(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected < 1 {
+		return errors.New("failed to delete id")
+	}
+
+	return nil
 }

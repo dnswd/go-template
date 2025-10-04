@@ -13,6 +13,10 @@ live:
 services:
     nix run .#runServices
 
+[working-directory: './backend/']
+sqlc:
+    sqlc generate
+
 migrate:
     bash ./infra/postgresql/migration.sh
 
