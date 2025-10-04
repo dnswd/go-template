@@ -1,0 +1,110 @@
+name: timeseries
+services:
+
+  # Database
+  # Uses latest Postgres 17 build with timescale extension installed.
+  
+  timescaledb:
+    image: timescale/timescaledb:latest-pg17
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: timescaledb
+      POSTGRES_PASSWORD: password
+    volumes:
+      - /data/timescaledb:/var/lib/postgresql/data
+    networks:
+      my_network:
+        ipv4_address: 240.0.0.4
+
+  # Backend
+  # Go app stored in ./backend folder
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: dockerfile
+    environment:
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_USER=root
+      - DB_PASS=mysql987
+      - DB_NAME=userdb
+    ports:
+      - "8080:8080"
+    restart: always
+    depends_on:
+      - timescaledb
+
+  # Prometheus
+
+  init_prometheus:
+    image: prom/prometheus
+    user: root
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        mkdir -p /etc/prometheus/
+        chown -R 65534:65534 /etc/prometheus
+    volumes:
+      - /data/prometheus:/prometheus
+
+  prometheus:
+    user: root
+    image: prom/prometheus
+    container_name: prometheus
+    depends_on:
+      - init_prometheus
+    networks:
+      my_network:
+        ipv4_address: 240.0.0.5
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.console.libraries=/usr/share/prometheus/console_libraries"
+      - "--web.console.templates=/usr/share/prometheus/consoles"
+    ports:
+      - 9090:9090
+    restart: unless-stopped
+    volumes:
+      - ./infra/prometheus.config.yaml:/etc/prometheus/prometheus.yml
+
+  # Prometheus DB adapter
+
+  prometheus_postgresql_adapter:
+    image: prometheuscommunity/postgres-exporter:latest
+    restart: always
+    depends_on:
+      - timescaledb
+    environment:
+      DATA_SOURCE_URI: 240.0.0.4:5432/postgres?sslmode=disable
+      DATA_SOURCE_USER: timescaledb
+      DATA_SOURCE_PASS: password
+    ports:
+      - 9187:9187/tcp
+    networks:
+      my_network:
+        ipv4_address: 240.0.0.3
+
+  # Grafana
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./infra/grafana/provisioning:/etc/grafana/provisioning
+    networks:
+      my_network:
+        ipv4_address: 240.0.0.2
+
+networks:
+  my_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 240.0.0.0/24
+          gateway: 240.0.0.1
+

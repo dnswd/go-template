@@ -1,0 +1,7 @@
+.direnv
+.env
+.env.prod
+.local
+*.local
+tmp
+*.runtime
