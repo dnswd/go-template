@@ -43,7 +43,7 @@ func ParseEnv(s string) (Env, error) {
 
 type Config struct {
 	Env      Env    `env:"GO_ENV"`
-	Database string `env:"DATABASE_URL"`
+	Database string `env:"DB_URI"`
 }
 
 func LoadConfig() (*Config, error) {

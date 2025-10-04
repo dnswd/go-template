@@ -3,7 +3,7 @@
 set -euo pipefail
 
 PROJECT_ROOT="$(git rev-parse --show-toplevel 2>/dev/null)"
-MIGRATIONS_DIR="$PROJECT_ROOT/infra/database/schema"
+MIGRATIONS_DIR="$PROJECT_ROOT/infra/postgresql/migrations"
 DB_URI="${DB_URI:-}"
 
 echo "PROJECT_ROOT: $PROJECT_ROOT"

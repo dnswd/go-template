@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/dnswd/arus/config"
+	"github.com/dnswd/arus/db"
 	"github.com/dnswd/arus/health"
 	"github.com/dnswd/arus/infra"
 	"github.com/dnswd/arus/server"
@@ -36,10 +37,12 @@ func realMain() int {
 	}
 	defer infra.Close()
 
+	queries := db.New(infra.DB())
+
 	// Wire up domain services
-    userRepo := user.NewPostgresRepository(infra.DB())
-    userService := user.NewService(userRepo)
-    userHandler := user.NewHandler(userService)
+	userRepo := user.NewPostgresRepository(queries)
+	userService := user.NewService(userRepo)
+	userHandler := user.NewHandler(userService)
 
     // Health check
     healthHandler := health.NewHandler(infra.DB())

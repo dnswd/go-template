@@ -20,7 +20,7 @@ func NewHandler(db *pgxpool.Pool) *HttpHandler {
 
 type HealthResponse struct {
 	Status  string            `json:"status"`
-	Checks  map[string]string `json:"checks"`
+	Checks  map[string]string `json:"checks,omitempty"`
 	Version string            `json:"version,omitempty"`
 }
 

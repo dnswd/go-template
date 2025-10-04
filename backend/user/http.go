@@ -15,10 +15,6 @@ func NewHandler(service Service) *HTTPHandler {
 	return &HTTPHandler{service: service}
 }
 
-func (h *HTTPHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
-	// HTTP handling
-}
-
 func (h *HTTPHandler) Create(w http.ResponseWriter, r *http.Request) {
     var req struct {
         Email string `json:"email"`
@@ -49,6 +45,7 @@ func (h *HTTPHandler) Get(w http.ResponseWriter, r *http.Request) {
         return
     }
     
+    // TODO: standardized response
     w.Header().Set("Content-Type", "application/json")
     json.NewEncoder(w).Encode(user)
 }

@@ -13,10 +13,10 @@ func (s *Server) setupRoutes() {
 	s.router.Route("/api/v1", func(r chi.Router) {
 		// TODO protected routes
 		// User routes
-		// r.Route("/users", func(r chi.Router) {
-		// 	r.Post("/", s.userHandler.Create)
-		// 	r.Get("/{id}", s.userHandler.Get)
-		// })
+		r.Route("/users", func(r chi.Router) {
+			r.Post("/", s.userHandler.Create)
+			r.Get("/{id}", s.userHandler.Get)
+		})
 
 		// // Order routes
 		// r.Route("/orders", func(r chi.Router) {

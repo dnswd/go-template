@@ -14,7 +14,7 @@ services:
     nix run .#runServices
 
 migrate:
-    bash ./infra/database/migration.sh
+    bash ./infra/postgresql/migration.sh
 
 clean-services:
     rm -rf ./.local/

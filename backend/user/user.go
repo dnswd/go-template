@@ -2,12 +2,14 @@ package user
 
 import (
 	"errors"
+	"time"
 )
 
 type User struct {
-	ID    string
-	Email string
-	Name  string
+	ID        string
+	Email     string
+	Name      string
+	CreatedAt time.Time
 }
 
 func (u *User) Validate() error {

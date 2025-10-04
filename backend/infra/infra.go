@@ -25,6 +25,8 @@ func New(ctx context.Context, cfg *config.Config) (*Infra, error) {
 		}
 		infra.pool = pool
 		log.Println("Database connection established")
+	} else {
+		log.Println("Skipping database init")
 	}
 
 	return infra, nil
