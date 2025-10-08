@@ -3,8 +3,6 @@ package user
 import (
 	"context"
 	"fmt"
-
-	"github.com/google/uuid"
 )
 
 type service struct {
@@ -18,7 +16,6 @@ func NewService(repo Repository) Service {
 func (s *service) CreateUser(ctx context.Context, email, name string) (*User, error) {
 	// Business logic here - pure, testable
 	user := &User{
-		ID:    uuid.NewString(),
 		Email: email,
 		Name:  name,
 	}
@@ -27,7 +24,12 @@ func (s *service) CreateUser(ctx context.Context, email, name string) (*User, er
 		return nil, fmt.Errorf("validation failed: %w", err)
 	}
 
-	return user, s.repo.Save(ctx, user)
+	insertedUser, err := s.repo.Save(ctx, user)
+	if err != nil {
+		return nil, fmt.Errorf("failed to save to db: %w", err)
+	}
+
+	return insertedUser, nil
 }
 
 func (s *service) GetUser(ctx context.Context, id string) (*User, error) {

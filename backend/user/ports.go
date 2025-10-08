@@ -3,7 +3,7 @@ package user
 import "context"
 
 type Repository interface {
-	Save(ctx context.Context, user *User) error
+	Save(ctx context.Context, user *User) (*User, error)
 	FindByID(ctx context.Context, id string) (*User, error)
 	Delete(ctx context.Context, id string) error
 }

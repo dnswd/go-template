@@ -6,7 +6,6 @@ import (
 	"log"
 
 	"github.com/dnswd/arus/db"
-	"github.com/google/uuid"
 )
 
 type postgresRepo struct {
@@ -26,18 +25,22 @@ func toUser(dbUser db.User) *User {
 	}
 }
 
-func (r *postgresRepo) Save(ctx context.Context, user *User) error {
+func (r *postgresRepo) Save(ctx context.Context, user *User) (*User, error) {
 	pgUser, err := r.queries.CreateUser(ctx, db.CreateUserParams{
-		ID:    uuid.NewString(),
 		Email: user.Email,
 		Name:  user.Name,
 	})
 
+	log.Printf("pgUser %#v", pgUser)
+
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return toUser(pgUser).Validate()
+	resultingUser := toUser(pgUser)
+
+	log.Printf("resulting user %#v", resultingUser)
+	return resultingUser, resultingUser.Validate()
 }
 
 func (r *postgresRepo) FindByID(ctx context.Context, id string) (*User, error) {
