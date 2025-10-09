@@ -6,10 +6,10 @@ import (
 )
 
 type User struct {
-	ID        string
-	Email     string
-	Name      string
-	CreatedAt time.Time
+	ID        string    `json:"id"`
+	Email     string    `json:"email"`
+	Name      string    `json:"name"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 func (u *User) Validate() error {

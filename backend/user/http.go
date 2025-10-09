@@ -57,7 +57,6 @@ func (h *HTTPHandler) Get(w http.ResponseWriter, r *http.Request) {
 func (h *HTTPHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 
-    // TODO: Delete not deleting
 	err := h.service.DeleteUser(r.Context(), id)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {

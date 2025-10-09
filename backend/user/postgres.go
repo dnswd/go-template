@@ -31,30 +31,22 @@ func (r *postgresRepo) Save(ctx context.Context, user *User) (*User, error) {
 		Name:  user.Name,
 	})
 
-	log.Printf("pgUser %#v", pgUser)
-
 	if err != nil {
 		return nil, err
 	}
 
 	resultingUser := toUser(pgUser)
 
-	log.Printf("resulting user %#v", resultingUser)
 	return resultingUser, resultingUser.Validate()
 }
 
 func (r *postgresRepo) FindByID(ctx context.Context, id string) (*User, error) {
-	log.Println("ZCZC id", id)
 	pgUser, err := r.queries.GetUser(ctx, id)
-	log.Println("ZCZC err", err)
 	if err != nil {
 		return nil, err
 	}
 
-	log.Println("ZCZC pgUser", pgUser)
-
 	user := toUser(pgUser)
-	log.Println("ZCZC user", user)
 	return user, user.Validate()
 }
 
