@@ -2,7 +2,6 @@ package config
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"reflect"
 	"strings"
@@ -34,6 +33,6 @@ func exportRuntimeEnv(config *Config) error {
 		return fmt.Errorf("failed to write .env.runtime: %w", err)
 	}
 
-	log.Printf("Exported %d environment variables to .env.runtime", len(lines))
+	fmt.Fprintf(os.Stdout, "Exported %d environment variables to .env.runtime\n", len(lines))
 	return nil
 }

@@ -4,10 +4,10 @@ go 1.24.7
 
 require (
 	github.com/go-chi/chi v1.5.5
-	github.com/google/uuid v1.6.0
 	github.com/jackc/pgx/v5 v5.7.6
 	github.com/profclems/go-dotenv v1.1.1
 	github.com/stretchr/testify v1.9.0
+	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 )
 
 require (

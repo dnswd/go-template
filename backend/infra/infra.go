@@ -3,7 +3,7 @@ package infra
 import (
 	"context"
 	"fmt"
-	"log"
+	"log/slog"
 
 	"github.com/dnswd/arus/config"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -14,7 +14,7 @@ type Infra struct {
 }
 
 func New(ctx context.Context, cfg *config.Config) (*Infra, error) {
-	log.Println("Initializing infrastructure...")
+	slog.InfoContext(ctx, "Initializing infrastructure...")
 
 	infra := &Infra{}
 
@@ -24,9 +24,9 @@ func New(ctx context.Context, cfg *config.Config) (*Infra, error) {
 			return nil, fmt.Errorf("failed to create postgres pool: %w", err)
 		}
 		infra.pool = pool
-		log.Println("Database connection established")
+		slog.InfoContext(ctx, "Database connection established")
 	} else {
-		log.Println("Skipping database init")
+		slog.InfoContext(ctx, "Skipping database init")
 	}
 
 	return infra, nil
@@ -38,7 +38,7 @@ func (i *Infra) DB() *pgxpool.Pool {
 
 func (i *Infra) Close() error {
 	if i.pool != nil {
-		log.Println("Closing database connection...")
+		slog.Info("Closing database connection...")
 		i.pool.Close()
 	}
 	return nil

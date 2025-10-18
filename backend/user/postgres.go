@@ -3,7 +3,6 @@ package user
 import (
 	"context"
 	"errors"
-	"log"
 
 	"github.com/dnswd/arus/db"
 )

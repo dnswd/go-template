@@ -2,7 +2,6 @@ package config
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"strings"
 
@@ -44,6 +43,7 @@ func ParseEnv(s string) (Env, error) {
 type Config struct {
 	Env      Env    `env:"GO_ENV"`
 	Database string `env:"DB_URI"`
+	LogPath  string `env:"LOG_PATH"`
 }
 
 func LoadConfig() (*Config, error) {
@@ -63,7 +63,7 @@ func LoadConfig() (*Config, error) {
 	}
 
 	if err := exportRuntimeEnv(config); err != nil {
-		log.Printf("Warning: failed to export .env.runtime: %v", err)
+		fmt.Fprintf(os.Stderr, "Warning: failed to export .env.runtime: %v\n", err)
 	}
 
 	return config, nil
@@ -85,7 +85,7 @@ func loadEnv(env Env) error {
 	for _, filename := range filesToLoad {
 		// Check if file exists before attempting to load
 		if _, err := os.Stat(filename); os.IsNotExist(err) {
-			log.Printf("Skipping %s (file not found)", filename)
+			fmt.Fprintf(os.Stderr, "Skipping %s (file not found)\n", filename)
 			continue
 		}
 
@@ -95,7 +95,7 @@ func loadEnv(env Env) error {
 			return fmt.Errorf("failed to load %s: %w", filename, err)
 		}
 
-		log.Printf("Successfully loaded %s", filename)
+		fmt.Fprintf(os.Stdout, "Successfully loaded %s \n", filename)
 	}
 
 	return nil

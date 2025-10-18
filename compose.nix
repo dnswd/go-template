@@ -71,6 +71,7 @@
 
     live = { ... }: {
       imports = [ infra ];
+      settings.environment = { LOG_FILE = "./app.log"; };
       settings.processes."arus" = {
         command = ''
           just backend
