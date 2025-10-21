@@ -7,27 +7,31 @@ package db
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const createUser = `-- name: CreateUser :one
-INSERT INTO users (email, name) 
-VALUES ($1, $2) 
-RETURNING id, email, name, created_at
+INSERT INTO users (email, name, balance) 
+VALUES ($1, $2, $3) 
+RETURNING id, email, name, created_at, balance
 `
 
 type CreateUserParams struct {
-	Email string `json:"email"`
-	Name  string `json:"name"`
+	Email   string         `json:"email"`
+	Name    string         `json:"name"`
+	Balance pgtype.Numeric `json:"balance"`
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
-	row := q.db.QueryRow(ctx, createUser, arg.Email, arg.Name)
+	row := q.db.QueryRow(ctx, createUser, arg.Email, arg.Name, arg.Balance)
 	var i User
 	err := row.Scan(
 		&i.ID,
 		&i.Email,
 		&i.Name,
 		&i.CreatedAt,
+		&i.Balance,
 	)
 	return i, err
 }
@@ -36,7 +40,7 @@ const deleteUser = `-- name: DeleteUser :execrows
 DELETE FROM users WHERE id = $1
 `
 
-func (q *Queries) DeleteUser(ctx context.Context, id string) (int64, error) {
+func (q *Queries) DeleteUser(ctx context.Context, id pgtype.UUID) (int64, error) {
 	result, err := q.db.Exec(ctx, deleteUser, id)
 	if err != nil {
 		return 0, err
@@ -45,12 +49,12 @@ func (q *Queries) DeleteUser(ctx context.Context, id string) (int64, error) {
 }
 
 const getUser = `-- name: GetUser :one
-SELECT id, email, name, created_at
+SELECT id, email, name, created_at, balance
 FROM users 
 WHERE id = $1
 `
 
-func (q *Queries) GetUser(ctx context.Context, id string) (User, error) {
+func (q *Queries) GetUser(ctx context.Context, id pgtype.UUID) (User, error) {
 	row := q.db.QueryRow(ctx, getUser, id)
 	var i User
 	err := row.Scan(
@@ -58,6 +62,7 @@ func (q *Queries) GetUser(ctx context.Context, id string) (User, error) {
 		&i.Email,
 		&i.Name,
 		&i.CreatedAt,
+		&i.Balance,
 	)
 	return i, err
 }

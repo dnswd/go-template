@@ -9,8 +9,9 @@ import (
 )
 
 type User struct {
-	ID        string           `json:"id"`
+	ID        pgtype.UUID      `json:"id"`
 	Email     string           `json:"email"`
 	Name      string           `json:"name"`
 	CreatedAt pgtype.Timestamp `json:"created_at"`
+	Balance   pgtype.Numeric   `json:"balance"`
 }
